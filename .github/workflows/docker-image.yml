@@ -7,6 +7,23 @@ on:
     tags:
       - "v*"
   workflow_dispatch:
+    inputs:
+      tz:
+        description: "TZ build arg"
+        required: false
+        default: "Asia/Shanghai"
+      claude_code_version:
+        description: "CLAUDE_CODE_VERSION build arg"
+        required: false
+        default: "latest"
+      git_delta_version:
+        description: "GIT_DELTA_VERSION build arg"
+        required: false
+        default: "0.18.2"
+      zsh_in_docker_version:
+        description: "ZSH_IN_DOCKER_VERSION build arg"
+        required: false
+        default: "1.2.1"
 
 permissions:
   contents: read
@@ -14,6 +31,10 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
+  DEFAULT_TZ: Asia/Shanghai
+  DEFAULT_CLAUDE_CODE_VERSION: latest
+  DEFAULT_GIT_DELTA_VERSION: 0.18.2
+  DEFAULT_ZSH_IN_DOCKER_VERSION: 1.2.1
 
 jobs:
   build:
@@ -55,6 +76,11 @@ jobs:
           file: ./Dockerfile
           platforms: ${{ matrix.platform }}
           outputs: type=image,name=${{ env.REGISTRY }}/${{ steps.prep.outputs.image }},push-by-digest=true,name-canonical=true,push=true
+          build-args: |
+            TZ=${{ inputs.tz || env.DEFAULT_TZ }}
+            CLAUDE_CODE_VERSION=${{ inputs.claude_code_version || env.DEFAULT_CLAUDE_CODE_VERSION }}
+            GIT_DELTA_VERSION=${{ inputs.git_delta_version || env.DEFAULT_GIT_DELTA_VERSION }}
+            ZSH_IN_DOCKER_VERSION=${{ inputs.zsh_in_docker_version || env.DEFAULT_ZSH_IN_DOCKER_VERSION }}
           labels: |
             org.opencontainers.image.description=My multi-arch image
 
