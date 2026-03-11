@@ -1,0 +1,52 @@
+# Codex CLI configuration template for Docker containers
+# Auto-copied to ~/.codex/config.toml by init-codex-config.sh
+# https://developers.openai.com/codex/local-config/
+
+model = "gpt-5.4"
+model_reasoning_effort = "medium"
+
+# CRITICAL: Disable Landlock sandbox (not supported in Docker's LinuxKit kernel)
+# OpenAI's official recommendation for containerized environments
+# Security is provided by Docker isolation, network firewall, and non-root user
+sandbox_mode = "danger-full-access"
+approval_policy = "never"
+
+[tui]
+# Desktop notifications from the TUI: boolean or filtered list. Default: false
+# Examples: true | ["agent-turn-complete", "approval-requested"]
+notifications = false
+# Show raw reasoning content when available (default: false)
+show_raw_agent_reasoning = true
+# Ensure we do not hide internal reasoning (default: false)
+hide_agent_reasoning = false
+
+[features]
+web_search_request = true
+unified_exec = false
+streamable_shell = false
+rmcp_client = false
+apply_patch_freeform = false
+view_image_tool = true
+experimental_sandbox_command_assessment = false
+ghost_commit = false
+enable_experimental_windows_sandbox = false
+
+[mcp_servers.cf-docs]
+command = "npx"
+args = ["-y", "mcp-remote", "https://docs.mcp.cloudflare.com/sse"]
+
+[mcp_servers.chrome-devtools]
+command = "npx"
+args = [
+"-y",
+"chrome-devtools-mcp@latest",
+"--executablePath=/usr/bin/chromium",
+"--headless",
+"--chromeArg=--no-sandbox",
+"--chromeArg=--disable-setuid-sandbox",
+"--chromeArg=--disable-dev-shm-usage"
+]
+
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp@latest"]
