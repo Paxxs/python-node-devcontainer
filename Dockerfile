@@ -6,6 +6,9 @@ ENV TZ="$TZ"
 
 ARG CLAUDE_CODE_VERSION=latest
 
+RUN npm config set registry https://registry.npmmirror.com && \
+    pnpm config set registry https://registry.npmmirror.com
+
 # Install development tools, compilers, and utilities
 # Groups: Core utils, Network tools, Build tools, Editors, AI CLI deps, Security
 # BuildKit cache mounts for faster rebuilds (5-10x speedup)
