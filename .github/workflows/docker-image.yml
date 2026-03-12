@@ -76,6 +76,10 @@ jobs:
           file: ./Dockerfile
           platforms: ${{ matrix.platform }}
           outputs: type=image,name=${{ env.REGISTRY }}/${{ steps.prep.outputs.image }},push-by-digest=true,name-canonical=true,push=true
+          cache-from: |
+            type=gha,scope=docker-${{ matrix.platform }}
+          cache-to: |
+            type=gha,mode=max,scope=docker-${{ matrix.platform }}
           build-args: |
             TZ=${{ inputs.tz || env.DEFAULT_TZ }}
             CLAUDE_CODE_VERSION=${{ inputs.claude_code_version || env.DEFAULT_CLAUDE_CODE_VERSION }}
