@@ -230,6 +230,7 @@ COPY init-claude-hooks.sh /usr/local/bin/
 COPY init-codex-config.sh /usr/local/bin/
 COPY init-opencode-config.sh /usr/local/bin/
 COPY init-python.sh /usr/local/bin/
+COPY patch-claude-toolsearch.py /usr/local/bin/
 COPY --chown=node:node settings.json.template /usr/local/share/claude-defaults/settings.json
 COPY --chown=node:node mcp.json.template /usr/local/share/claude-defaults/mcp.json
 COPY --chmod=755 session-start.sh.template /usr/local/share/claude-defaults/hooks/session-start.sh
