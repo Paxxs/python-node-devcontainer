@@ -1,14 +1,14 @@
 # syntax=docker/dockerfile:1.7
 
-FROM node:24-bookworm-slim@sha256:<PIN_THIS_DIGEST>
+FROM node:24-bookworm-slim
 
 ARG TZ=UTC
 ARG USERNAME=node
 ARG GIT_DELTA_VERSION=0.18.2
 ARG AWSCLI_VERSION=2.17.57
-ARG UV_VERSION=0.6.6
-ARG BUN_VERSION=1.2.5
-ARG ZSH_IN_DOCKER_VERSION=1.2.0
+ARG UV_VERSION=0.10.9
+ARG BUN_VERSION=1.3.10
+ARG ZSH_IN_DOCKER_VERSION=1.2.1
 
 ENV TZ=${TZ} \
     DEVCONTAINER=true \
@@ -124,7 +124,7 @@ USER root
 COPY scripts/ /usr/local/bin/
 COPY templates/settings.json.template /usr/local/share/claude-defaults/settings.json
 COPY templates/mcp.json.template /usr/local/share/claude-defaults/mcp.json
-COPY templates/session-start.sh.template /usr/local/share/claude-defaults/hooks/session-start.sh
+COPY --chmod=755 session-start.sh.template /usr/local/share/claude-defaults/hooks/session-start.sh
 COPY templates/config.toml.template /usr/local/share/codex-defaults/config.toml
 
 RUN chown -R node:node /usr/local/share/claude-defaults /usr/local/share/codex-defaults && \
