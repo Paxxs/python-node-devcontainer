@@ -1,32 +1,57 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 echo "=== Python 3.14 Setup ==="
 
-# Install Python 3.14 via uv
-echo "Installing Python 3.14..."
-/home/node/.local/bin/uv python install 3.14
+WORKSPACE_FOLDER="${CONTAINERWSF:-/workspaces/claude-code-devcontainers}"
+UV_BIN="${HOME}/.local/bin/uv"
 
-# Pin Python 3.14 for the project
-echo "Pinning Python 3.14..."
-cd /workspaces/claude-code-devcontainers
-/home/node/.local/bin/uv python pin 3.14
+if [ ! -x "$UV_BIN" ]; then
+  echo "uv not found: $UV_BIN"
+  exit 1
+fi
 
-# Get Python 3.14 path
-PYTHON314_PATH=$(/home/node/.local/bin/uv python find 3.14)
+if [ ! -d "$WORKSPACE_FOLDER" ]; then
+  echo "Workspace folder not found: $WORKSPACE_FOLDER"
+  exit 1
+fi
+
+echo "Configuring uv package index..."
+mkdir -p "${HOME}/.config/uv"
+cat > "${HOME}/.config/uv/uv.toml" <<'EOF'
+[[index]]
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/"
+default = true
+EOF
+
+echo "Installing Python 3.14 via uv..."
+"$UV_BIN" python install 3.14
+
+echo "Pinning Python 3.14 for the project..."
+cd "$WORKSPACE_FOLDER"
+"$UV_BIN" python pin 3.14
+
+PYTHON314_PATH="$("$UV_BIN" python find 3.14)"
 echo "Python 3.14 installed at: $PYTHON314_PATH"
 
-# Create system symlink and update alternatives (requires sudo)
-sudo ln -sf "$PYTHON314_PATH" /usr/local/bin/python3.14
-sudo update-alternatives --install /usr/bin/python python /usr/local/bin/python3.14 100
-sudo update-alternatives --install /usr/bin/python3 python3 /usr/local/bin/python3.14 100
+echo "Making python3.14 available in user PATH..."
+mkdir -p "${HOME}/.local/bin"
+ln -sf "$PYTHON314_PATH" "${HOME}/.local/bin/python3.14"
+ln -sf "$PYTHON314_PATH" "${HOME}/.local/bin/python"
 
-# Verify installation
-echo "Verifying Python installation..."
-python --version
-python3 --version
+if ! grep -q 'export PATH="$HOME/.local/bin:$PATH"' "${HOME}/.bashrc" 2>/dev/null; then
+  echo 'export PATH="$HOME/.local/bin:$PATH"' >> "${HOME}/.bashrc"
+fi
+
+echo "Configuring pip mirror..."
+"${HOME}/.local/bin/python" -m pip config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
+
+echo "Verifying installation..."
+"${HOME}/.local/bin/python" --version
+"${HOME}/.local/bin/python3.14" --version
+
 echo ""
 echo "Available Python versions:"
-/home/node/.local/bin/uv python list
+"$UV_BIN" python list
 
-echo "✅ Python 3.14 configured as default"
+echo "Done. Reopen shell or run: export PATH=\"$HOME/.local/bin:\$PATH\""
