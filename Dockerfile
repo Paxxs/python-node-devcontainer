@@ -124,7 +124,7 @@ USER root
 COPY scripts/ /usr/local/bin/
 COPY templates/settings.json.template /usr/local/share/claude-defaults/settings.json
 COPY templates/mcp.json.template /usr/local/share/claude-defaults/mcp.json
-COPY --chmod=755 session-start.sh.template /usr/local/share/claude-defaults/hooks/session-start.sh
+COPY --chmod=755 templates/session-start.sh.template /usr/local/share/claude-defaults/hooks/session-start.sh
 COPY templates/config.toml.template /usr/local/share/codex-defaults/config.toml
 
 RUN chown -R node:node /usr/local/share/claude-defaults /usr/local/share/codex-defaults && \
