@@ -140,7 +140,7 @@
       "onAutoForward": "silent"
     }
   },
-  "postCreateCommand": "npm install -g npm@latest && npm install -g @anthropic-ai/claude-code@latest --verbose && npm install -g @openai/codex && npm install -g @google/gemini-cli && npm install -g opencode-ai@latest && npm install -g wrangler@latest && npm install -g vercel@latest && ls -lah /home/node/.claude && /usr/local/bin/init-claude-config.sh && /usr/local/bin/init-claude-hooks.sh && /usr/local/bin/init-codex-config.sh && /usr/local/bin/init-opencode-config.sh && /usr/local/bin/init-python.sh",
-  "postStartCommand": "sudo python /usr/local/bin/patch-claude-toolsearch.py --auto && bash ${containerWorkspaceFolder}/.devcontainer/setup-git-hooks.sh",
+  "postCreateCommand": "npm install -g npm@latest --registry=https://registry.npmmirror.com && npm install -g @anthropic-ai/claude-code@latest --verbose --registry=https://registry.npmmirror.com && npm install -g @openai/codex --registry=https://registry.npmmirror.com && npm install -g @google/gemini-cli --registry=https://registry.npmmirror.com && npm install -g opencode-ai@latest --registry=https://registry.npmmirror.com && npm install -g wrangler@latest --registry=https://registry.npmmirror.com && npm install -g vercel@latest --registry=https://registry.npmmirror.com && ls -lah /home/node/.claude && /usr/local/bin/init-claude-config.sh && /usr/local/bin/init-claude-hooks.sh && /usr/local/bin/init-codex-config.sh && /usr/local/bin/init-opencode-config.sh && /usr/local/bin/init-python.sh",
+  "postStartCommand": "python ${containerWorkspaceFolder}/.devcontainer/patch-claude-toolsearch.py --auto && bash ${containerWorkspaceFolder}/.devcontainer/setup-git-hooks.sh",
   "waitFor": "postCreateCommand"
 }
