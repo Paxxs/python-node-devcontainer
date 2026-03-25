@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-FROM node:24-bookworm-slim
+FROM node:25-bookworm-slim
 
 ARG TZ=UTC
 ARG USERNAME=node
@@ -30,7 +30,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get update && apt-get install -y --no-install-recommends \
     less curl wget ca-certificates gnupg2 software-properties-common apt-transport-https lsb-release \
     git git-lfs gh \
-    zsh fzf man-db \
+    zsh man-db \
     procps htop tree sudo \
     dnsutils net-tools iputils-ping telnet netcat-openbsd iptables ipset iproute2 aggregate \
     unzip zip bzip2 xz-utils \
@@ -51,6 +51,13 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     && rm -rf /var/lib/apt/lists/*
 
 RUN ln -s $(which fdfind) /usr/local/bin/fd
+
+RUN apt-get update && apt-get install -y curl ca-certificates tar \
+    && FZF_VERSION=$(curl -s https://api.github.com/repos/junegunn/fzf/releases/latest | grep tag_name | cut -d '"' -f 4) \
+    && curl -L https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fzf-${FZF_VERSION#v}-linux_amd64.tar.gz \
+    | tar -xz -C /usr/local/bin \
+    && chmod +x /usr/local/bin/fzf \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN chown -R node:node /usr/local/share
 
