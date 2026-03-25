@@ -50,6 +50,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     && update-alternatives --install /usr/bin/python python /usr/bin/python3 1 \
     && rm -rf /var/lib/apt/lists/*
 
+RUN ln -s $(which fdfind) /usr/local/bin/fd
+
 RUN chown -R node:node /usr/local/share
 
 # ---- user directories: low change ----
@@ -102,8 +104,7 @@ RUN echo 'export PATH=$PATH:/home/node/.npm-global/bin:/home/node/.local/bin' >>
 RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh)" -- \
     -p git \
     -p fzf \
-    -a "source /usr/share/doc/fzf/examples/key-bindings.zsh" \
-    -a "source /usr/share/doc/fzf/examples/completion.zsh" \
+    -a "source <(fzf --zsh)" \
     -x
 
 RUN ARCH="$(uname -m)" && \
